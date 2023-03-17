@@ -2,7 +2,7 @@
 A text generation model with stream decoding.
 """
 import copy
-
+import os
 import torch
 from tenacity import retry, stop_after_attempt, wait_fixed
 from transformers import (
@@ -315,10 +315,12 @@ def load_model(
     half_precision=False,
 ):
     """Load a text generation model and make it stream-able."""
+    assert os.environ.get("HF_TOKEN"), "HF_TOKEN environment variable required"
     kwargs = {
         "cache_dir": cache_dir,
         "local_files_only": local_files_only,
         "trust_remote_code": trust_remote_code,
+        "use_auth_token": os.environ["HF_TOKEN"]
     }
     tokenizer = AutoTokenizer.from_pretrained(name_or_path, **kwargs)
 
